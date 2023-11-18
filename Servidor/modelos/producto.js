@@ -6,7 +6,9 @@ const esquemaProducto = new mongoose.Schema(
         stock: { type: Number, required: true },
         precio: { type: Number, required: true },
         conDescuento: { type: Boolean, default: false },
-        precioConDescuento: { type: Number, default: 0 },
+        precioDescuento: { type: Number, default: function() {
+            return this.precio;
+        }},
         fechaCreacion: { type: Date, default: Date.now },
     },
     {
