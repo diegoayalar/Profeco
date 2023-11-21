@@ -17,6 +17,10 @@ const router = createRouter({
       path: '/productos/nuevo',
       component: FormularioProducto
     },
+    {
+      path: '/productos/editar/:id',
+      component: FormularioProducto
+    },
   ],
 })
 
