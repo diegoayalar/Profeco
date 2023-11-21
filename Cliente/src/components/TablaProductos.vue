@@ -21,9 +21,9 @@
                         <td>{{ producto._id }}</td>
                         <td>{{ producto.nombre }}</td>
                         <td>{{ producto.stock }}</td>
-                        <td>{{ producto.precio }}</td>
+                        <td>${{ producto.precio }}</td>
                         <td>{{ producto.conDescuento ? "Si" : "No" }}</td>
-                        <td>{{ producto.precioDescuento }}</td>
+                        <td>${{ producto.precioDescuento }}</td>
                         <td>
                             <router-link
                                 :to="'/productos/editar/' + producto._id"
