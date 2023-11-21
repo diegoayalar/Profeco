@@ -5,8 +5,10 @@ const esquemaProducto = new mongoose.Schema(
         nombre: { type: String, required: true },
         stock: { type: Number, required: true },
         precio: { type: Number, required: true },
-        conDescuento: { type: Boolean, default: false },
-        precioConDescuento: { type: Number, default: 0 },
+        tieneDescuento: { type: Boolean, default: false },
+        precioDescuento: { type: Number, default: function() {
+            return this.precio;
+        }},
         fechaCreacion: { type: Date, default: Date.now },
     },
     {
