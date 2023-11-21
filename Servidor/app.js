@@ -17,10 +17,6 @@ app.use(cors());
 // Rutas API
 app.use("/api", entidadesRutas);
 
-app.get("/", (req, res) => {
-    res.send("Hello from the backend!");
-});
-
 // Puerto en el que escucha el servidor
 const puerto = process.env.PORT;
 app.listen(puerto, () => {
