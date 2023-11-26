@@ -2,21 +2,28 @@ const mongoose = require("mongoose");
 const usuario = require("./usuario");
 
 const esquemaMercado = new mongoose.Schema(
-    {
-        usuario: {
-            type: usuario.schema,
-            required: true,
-        },
-        productos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Producto" }],
-        notificaciones: [
-            { type: mongoose.Schema.Types.ObjectId, ref: "Notificacion" },
-        ],
+  {
+    nombre: { type: String, required: true },
+    usuario: {
+      type: usuario.schema,
+      required: true,
     },
-    {
-        versionKey: false,
-    }
+    productos: [
+      {
+        producto: { type: mongoose.Schema.Types.ObjectId, ref: "Producto", required: true },
+        precio: { type: Number, required: true },
+      }
+    ],
+    notificaciones: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Notificacion" },
+    ],
+  },
+  {
+    versionKey: false,
+    timestamps: true, // Agregamos timestamps para el registro de la fecha de creación y modificación
+  }
 );
 
-const mercado = mongoose.model("Mercado", esquemaMercado);
+const Mercado = mongoose.model("Mercado", esquemaMercado);
 
-module.exports = mercado;
+module.exports = Mercado;
