@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
-const usuario = require("./usuario");
 
 const esquemaConsumidor = new mongoose.Schema(
     {
         usuario: {
-            type: usuario.schema,
+            type: mongoose.Schema.Types.ObjectId, ref: "Usuario",
             required: true,
         },
         numeroTelefono: { type: String },

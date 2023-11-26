@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
-const usuario = require("./usuario");
 
 const esquemaMercado = new mongoose.Schema(
     {
         usuario: {
-            type: usuario.schema,
+            type: mongoose.Schema.Types.ObjectId, ref: "Usuario",
             required: true,
         },
         productos: [{ type: mongoose.Schema.Types.ObjectId, ref: "Producto" }],
