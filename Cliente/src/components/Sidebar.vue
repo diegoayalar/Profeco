@@ -217,9 +217,15 @@ aside {
         }
     }
 
+    // Updated styles for responsive and fixed position
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+
     @media (max-width: 1024px) {
-        position: absolute;
-        z-index: 99;
+        position: static;
+        width: 100%;
     }
 }
 </style>
