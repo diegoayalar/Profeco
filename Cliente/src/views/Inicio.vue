@@ -1,5 +1,5 @@
 <template>
-	   <div class="mx-auto">
+    <div class="mx-auto">
         <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
             <div class="container">
                 <a class="navbar-brand" href="#">Online Store</a>
@@ -28,44 +28,50 @@
                         <li class="nav-item">
                             <a class="nav-link cart-icon" href="#">
                                 <i class="fa fa-shopping-cart"></i> Carrito
-                                <span class="badge badge-primary">{{ cartCounter }}</span>
+                                <span class="badge badge-primary">{{
+                                    cartCounter
+                                }}</span>
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
-    <div class="container mt-5">
-        <h2 class="mb-4"><b>Catalogo</b></h2>
-        <div v-for="market in markets" :key="market.id">
-            <h3 class="mb-4">{{ market.name }}</h3>
-            <div class="row flex-nowrap overflow-auto scrollable-row">
-                <div
-                    v-for="product in products"
-                    :key="product.id"
-                    class="col-md-2 mb-2"
-                >
-                    <div class="card h-100">
-                        <img
-                            src="https://via.placeholder.com/300"
-                            class="card-img-top"
-                            alt="Product Image"
-                        />
-                        <div class="card-body">
-                            <h5 class="card-title">{{ product.nombre }}</h5>
-                            <p class="card-text">
-                                Precio: ${{ product.precio }}
-                            </p>
-							<a href="#" class="btn btn-primary" @click="addToCart(product)">
-                        Agregar a carrito
-                    </a>
+        <div class="container mt-5">
+            <h2 class="mb-4"><b>Catalogo</b></h2>
+            <div v-for="market in markets" :key="market.id">
+                <h3 class="mb-4">{{ market.usuario.nombre }}</h3>
+                <div class="row flex-nowrap overflow-auto scrollable-row">
+                    <div
+                        v-for="product in market.productos"
+                        :key="product.id"
+                        class="col-md-2 mb-2"
+                    >
+                        <div class="card h-100">
+                            <img
+                                src="https://via.placeholder.com/300"
+                                class="card-img-top"
+                                alt="Product Image"
+                            />
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.nombre }}</h5>
+                                <p class="card-text">
+                                    Precio: ${{ product.precio }}
+                                </p>
+                                <a
+                                    href="#"
+                                    class="btn btn-primary"
+                                    @click="addToCart(product)"
+                                >
+                                    Agregar a carrito
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-	</div>
 </template>
 
 <script>
@@ -74,31 +80,50 @@ import axios from "axios";
 export default {
     data() {
         return {
-            markets: [
-                { id: 1, name: "Mercado 1" },
-                // Add more markets as needed
-            ],
-            products: [],
-			cartCounter: 0,
+            markets: [],
+            cartCounter: 0,
         };
     },
     methods: {
-        async fetchProducts() {
+        async fetchMarkets() {
             try {
+                const token = localStorage.getItem("token");
+
+                if (!token) {
+                    console.error(
+                        "No token found. User may not be authenticated."
+                    );
+                    return;
+                }
+
                 const response = await axios.get(
-                    "http://localhost:3000/api/productos"
+                    "http://localhost:3000/api/mercados",
+                    {
+                        headers: {
+                            Authorization: `${token}`,
+                        },
+                    }
                 );
-                this.products = response.data;
+
+                this.markets = response.data;
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error("Error fetching markets:", error);
+
+                if (error.response && error.response.status === 401) {
+                    this.logOut();
+                }
             }
         },
-		addToCart(product) {
+        addToCart() {
             this.cartCounter++;
+        },
+        logOut() {
+            localStorage.removeItem("token");
+            router.push("/login");
         },
     },
     mounted() {
-        this.fetchProducts();
+        this.fetchMarkets();
     },
 };
 </script>
