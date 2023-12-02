@@ -2,7 +2,16 @@ const Mercado = require("../modelos/mercado");
 const controladorGenerico = require("./controladorGenerico");
 
 exports.obtenerTodos = async (req, res) => {
-    await controladorGenerico.obtenerTodos(Mercado, req, res);
+    try {
+        const entidades = await Mercado.find()
+        .populate('usuario')
+        .populate('productos')
+        res.json(entidades);
+    } catch (error) {
+        res.status(500).json({
+            mensaje: `Error al obtener entidades: ${error.message}`,
+        });
+    }
 };
 
 exports.obtenerPorId = async (req, res) => {
