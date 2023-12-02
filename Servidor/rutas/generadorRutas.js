@@ -11,6 +11,10 @@ function generarRutas(controlador) {
         .put(controlador.actualizar)
         .delete(controlador.eliminar);
 
+        if (controlador.obtenerPorUsuario) {
+            router.get("/usuario/:usuarioId", controlador.obtenerPorUsuario);
+        }
+
     return router;
 }
 
