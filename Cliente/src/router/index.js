@@ -1,17 +1,21 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Inicio from '../views/Inicio.vue'
-import Productos from '../views/Productos.vue'
-import FormularioProducto from '../views/FormularioProducto.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Inicio from '../views/Inicio.vue';
+import Login from '../views/Login.vue';
+import Productos from '../views/Productos.vue';
+import FormularioProducto from '../views/FormularioProducto.vue';
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: '/',
-      component: Inicio
+      component: Inicio,
+      meta: { requiresAuth: true }
     },
     {
       path: '/productos',
-      component: Productos
+      component: Productos,
+      meta: { requiresAuth: true}
     },
     {
       path: '/productos/nuevo',
@@ -21,7 +25,28 @@ const router = createRouter({
       path: '/productos/editar/:id',
       component: FormularioProducto
     },
+    {
+      path: '/login',
+      component: Login
+    },
   ],
-})
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('token');
+
+  if (to.path !== '/login' && !isAuthenticated) {
+    next('/login');
+  } else if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+    next('/login');
+  } else {
+    // Only reload on navigating to the login page
+    if (to.path === '/login' && isAuthenticated) {
+      window.location.reload();
+    } else {
+      next();
+    }
+  }
+});
+
+export default router;
