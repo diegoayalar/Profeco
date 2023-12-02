@@ -90,9 +90,17 @@ export default {
     methods: {
         eliminarProducto() {
             if (this.productoAEliminar) {
+                const productoId = this.productoAEliminar._id;
+                const mercadoId = this.mercado._id;
+
+                // Elimina el producto de la lista sin recargar toda la tabla
+                this.productos = this.productos.filter(
+                    (producto) => producto._id !== productoId
+                );
+
                 axios
                     .delete(
-                        `http://localhost:3000/api/productos/${this.productoAEliminar._id}`,
+                        `http://localhost:3000/api/productos/${productoId}`,
                         {
                             headers: {
                                 Authorization: `${localStorage.getItem(
@@ -102,19 +110,41 @@ export default {
                         }
                     )
                     .then(() => {
-                        // Elimina el producto de la lista sin recargar toda la tabla
-                        this.productos = this.productos.filter(
-                            (producto) =>
-                                producto._id !== this.productoAEliminar._id
-                        );
-                        this.cancelarEliminacion(); // Cerrar la ventana después de eliminar
+                        // Actualiza el array productosIds del mercado eliminando el ID del producto
+                        axios
+                            .put(
+                                `http://localhost:3000/api/mercados/${mercadoId}`,
+                                {
+                                    productosIds: this.productos.map(
+                                        (producto) => producto._id
+                                    ),
+                                },
+                                {
+                                    headers: {
+                                        Authorization: `${localStorage.getItem(
+                                            "token"
+                                        )}`,
+                                    },
+                                }
+                            )
+                            .then(() => {
+                                console.log(
+                                    "Producto y mercado actualizados exitosamente"
+                                );
+                                this.cancelarEliminacion(); // Cerrar la ventana después de eliminar
+                            })
+                            .catch((error) => {
+                                console.error(
+                                    "Error al actualizar el mercado después de eliminar el producto:",
+                                    error
+                                );
+                            });
                     })
                     .catch((error) => {
                         console.error("Error al eliminar producto:", error);
                     });
             }
         },
-
         mostrarModal(producto) {
             this.productoAEliminar = producto;
             this.mostrarConfirmacion = true;
