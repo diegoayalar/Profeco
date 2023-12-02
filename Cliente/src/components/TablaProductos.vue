@@ -84,6 +84,7 @@ export default {
             productos: [],
             mostrarConfirmacion: false,
             productoAEliminar: null,
+            mercado: null,
         };
     },
     methods: {
@@ -91,7 +92,14 @@ export default {
             if (this.productoAEliminar) {
                 axios
                     .delete(
-                        `http://localhost:3000/api/productos/${this.productoAEliminar._id}`
+                        `http://localhost:3000/api/productos/${this.productoAEliminar._id}`,
+                        {
+                            headers: {
+                                Authorization: `${localStorage.getItem(
+                                    "token"
+                                )}`,
+                            },
+                        }
                     )
                     .then(() => {
                         // Elimina el producto de la lista sin recargar toda la tabla
@@ -106,6 +114,7 @@ export default {
                     });
             }
         },
+
         mostrarModal(producto) {
             this.productoAEliminar = producto;
             this.mostrarConfirmacion = true;
@@ -114,22 +123,29 @@ export default {
             this.mostrarConfirmacion = false;
             this.productoAEliminar = null;
         },
-        obtenerProductos() {
+        obtenerMercadoPorUsuario() {
+            const id = localStorage.getItem("id");
+            console.log(id);
             axios
-                .get("http://localhost:3000/api/productos")
+                .get(`http://localhost:3000/api/mercados/usuario/${id}`, {
+                    headers: {
+                        Authorization: `${localStorage.getItem("token")}`,
+                    },
+                })
                 .then((response) => {
-                    this.productos = response.data;
+                    this.mercado = response.data;
+                    this.productos = this.mercado.productos;
                 })
                 .catch((error) => {
                     console.error(
-                        "Error al obtener los datos de los productos:",
+                        "Error al obtener el mercado por usuario:",
                         error
                     );
                 });
         },
     },
     mounted() {
-        this.obtenerProductos(); // Llamada inicial
+        this.obtenerMercadoPorUsuario();
     },
 };
 </script>
