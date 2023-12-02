@@ -112,6 +112,7 @@ export default {
                 tieneDescuento: false,
                 precioDescuento: 0,
             },
+            mercado: null,
         };
     },
     methods: {
@@ -170,7 +171,33 @@ export default {
                     }
                 )
                 .then((response) => {
-                    this.$router.push("/productos");
+                    const nuevoProductoId = response.data.entidad._id;
+                    this.mercado.productosIds.push(nuevoProductoId);
+
+                    axios
+                        .put(
+                            `http://localhost:3000/api/mercados/${this.mercado._id}`,
+                            { productosIds: this.mercado.productosIds },
+                            {
+                                headers: {
+                                    Authorization: `${localStorage.getItem(
+                                        "token"
+                                    )}`,
+                                },
+                            }
+                        )
+                        .then(() => {
+                            console.log(
+                                "Mercado actualizado con el nuevo producto"
+                            );
+                            this.$router.push("/productos");
+                        })
+                        .catch((error) => {
+                            console.error(
+                                "Error al actualizar el mercado:",
+                                error
+                            );
+                        });
                 })
                 .catch((error) => {
                     console.error("Error al agregar producto:", error);
@@ -215,7 +242,6 @@ export default {
                 })
                 .then((response) => {
                     this.mercado = response.data;
-                    this.productos = this.mercado.productos;
                 })
                 .catch((error) => {
                     console.error(
@@ -228,6 +254,7 @@ export default {
     mounted() {
         this.checkEditing();
         this.fetchProductData();
+        this.obtenerMercadoPorUsuario();
     },
 };
 </script>
