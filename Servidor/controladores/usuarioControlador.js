@@ -24,20 +24,20 @@ exports.eliminar = async (req, res) => {
 };
 
 exports.autenticar = async (req, res) => {
-    const { nombre, contrasena } = req.body;
+    const { correoElectronico, contrasena } = req.body;
 
     try {
-        const usuario = await Usuario.findOne({ nombre: nombre });
+        const usuario = await Usuario.findOne({ correoElectronico: correoElectronico });
         if (!usuario) {
-            return res.status(401).json({ mensaje: 'Nombre de usuario o contraseña incorrectos' });
+            return res.status(401).json({ mensaje: 'Correo electrónico o contraseña incorrectos' });
         }
 
         const esContrasenaValida = await bcrypt.compare(contrasena, usuario.contrasena);
         if (!esContrasenaValida) {
-            return res.status(401).json({ mensaje: 'Nombre de usuario o contraseña incorrectos' });
+            return res.status(401).json({ mensaje: 'Correo electrónico o contraseña incorrectos' });
         }
 
-        const token = jwtUtil.generarToken({ nombre: usuario.nombre, rol: usuario.rol });
+        const token = jwtUtil.generarToken({ id: usuario._id, rol: usuario.rol });
         res.json({ token });
     } catch (error) {
         res.status(500).json({ mensaje: `Error al autenticar usuario: ${error.message}` });
